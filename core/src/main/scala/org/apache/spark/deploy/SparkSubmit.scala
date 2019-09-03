@@ -348,6 +348,15 @@ private[spark] class SparkSubmit extends Logging {
           UserGroupInformation.loginUserFromKeytab(args.principal, args.keytab)
         }
       }
+
+      if (args.mkPrincipal != null) {
+        if (args.mkKeytab != null && args.mkHdfsURL != null) {
+          require(new File(args.mkKeytab).exists(), s"mkKeytab file: ${args.keytab} does not exist")
+          sparkConf.set(MULTI_KRB_KEYTAB, args.mkKeytab)
+          sparkConf.set(MULTI_KRB_PRINCIPAL, args.mkPrincipal)
+          sparkConf.set(MULTI_KRB_HDFS_URL, args.mkHdfsURL)
+        }
+      }
     }
 
     // Resolve glob path for different resources.

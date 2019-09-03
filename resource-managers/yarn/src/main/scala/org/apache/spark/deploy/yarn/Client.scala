@@ -118,6 +118,19 @@ private[spark] class Client(
     }
   }
 
+
+  private val mkPrincipal = sparkConf.get(MULTI_KRB_PRINCIPAL).orNull
+  private val mkKeytab = sparkConf.get(MULTI_KRB_KEYTAB).orNull
+  private val multiKrbSupport = mkPrincipal != null
+  private val amKeytabFileName2: String = {
+    if (multiKrbSupport) {
+      new File(mkKeytab).getName() + "-" + UUID.randomUUID().toString
+    } else {
+      null
+    }
+
+  }
+
   private val launcherBackend = new LauncherBackend() {
     override protected def conf: SparkConf = sparkConf
 
@@ -517,6 +530,15 @@ private[spark] class Client(
         appMasterOnly = true)
       require(localizedPath != null, "Keytab file already distributed.")
     }
+    if (multiKrbSupport) {
+      logInfo("To enable the AM to login from multi-krb keytab, " +
+        "credentials are being copied over" +
+        "to the AM via the YARN Secure Distributed Cache.")
+      val (_, localizedPath) = distribute(mkKeytab,
+        destName = Some(amKeytabFileName2),
+        appMasterOnly = true)
+      require(localizedPath != null, "Keytab file already distributed.")
+    }
 
     /**
      * Add Spark to the cache. There are two settings that control what files to add to the cache:
@@ -791,6 +813,7 @@ private[spark] class Client(
       // Override spark.yarn.key to point to the location in distributed cache which will be used
       // by AM.
       Option(amKeytabFileName).foreach { k => props.setProperty(KEYTAB.key, k) }
+      Option(amKeytabFileName2).foreach { k => props.setProperty(MULTI_KRB_KEYTAB.key, k) }
       confStream.putNextEntry(new ZipEntry(SPARK_CONF_FILE))
       val writer = new OutputStreamWriter(confStream, StandardCharsets.UTF_8)
       props.store(writer, "Spark configuration.")

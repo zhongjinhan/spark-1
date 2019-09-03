@@ -161,6 +161,18 @@ package object config {
     .doc("Name of the Kerberos principal.")
     .stringConf.createOptional
 
+  private[spark] val MULTI_KRB_KEYTAB = ConfigBuilder("spark.yarn.mk.keytab")
+    .doc("Location of user's additional keytab.")
+    .stringConf.createOptional
+
+  private[spark] val MULTI_KRB_PRINCIPAL = ConfigBuilder("spark.yarn.mk.principal")
+    .doc("Name of the Kerberos principal.")
+    .stringConf.createOptional
+
+  private[spark] val MULTI_KRB_HDFS_URL = ConfigBuilder("spark.yarn.mk.url")
+    .doc("url of additional HDFS")
+    .stringConf.createOptional
+
   private[spark] val EXECUTOR_INSTANCES = ConfigBuilder("spark.executor.instances")
     .intConf
     .createOptional

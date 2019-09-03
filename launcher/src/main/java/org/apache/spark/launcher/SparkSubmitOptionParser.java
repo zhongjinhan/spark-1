@@ -75,6 +75,9 @@ class SparkSubmitOptionParser {
   protected final String NUM_EXECUTORS = "--num-executors";
   protected final String PRINCIPAL = "--principal";
   protected final String QUEUE = "--queue";
+  protected final String MK_KEYTAB = "--mk-keytab";
+  protected final String MK_PRINCIPAL = "--mk-principal";
+  protected final String MK_HDFS_URL = "--mk-hdfs-url";
 
   /**
    * This is the canonical list of spark-submit options. Each entry in the array contains the
@@ -115,6 +118,9 @@ class SparkSubmitOptionParser {
     { REPOSITORIES },
     { STATUS },
     { TOTAL_EXECUTOR_CORES },
+    { MK_KEYTAB },
+    { MK_PRINCIPAL },
+    { MK_HDFS_URL },
   };
 
   /**

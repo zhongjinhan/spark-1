@@ -75,6 +75,9 @@ private[deploy] class SparkSubmitArguments(args: Seq[String], env: Map[String, S
   var proxyUser: String = null
   var principal: String = null
   var keytab: String = null
+  var mkKeytab: String = null
+  var mkPrincipal: String = null
+  var mkHdfsURL: String = null
   private var dynamicAllocationEnabled: Boolean = false
 
   // Standalone cluster mode only
@@ -200,6 +203,9 @@ private[deploy] class SparkSubmitArguments(args: Seq[String], env: Map[String, S
       .getOrElse(sparkProperties.get("spark.executor.instances").orNull)
     queue = Option(queue).orElse(sparkProperties.get("spark.yarn.queue")).orNull
     keytab = Option(keytab).orElse(sparkProperties.get("spark.yarn.keytab")).orNull
+    mkKeytab = Option(mkKeytab).orElse(sparkProperties.get("spark.yarn.mk.keytab")).orNull
+    mkPrincipal = Option(mkPrincipal).orElse(sparkProperties.get("spark.yarn.mk.principal")).orNull
+    mkHdfsURL = Option(mkHdfsURL).orElse(sparkProperties.get("spark.yarn.mk.url")).orNull
     principal = Option(principal).orElse(sparkProperties.get("spark.yarn.principal")).orNull
     dynamicAllocationEnabled =
       sparkProperties.get("spark.dynamicAllocation.enabled").exists("true".equalsIgnoreCase)
@@ -456,6 +462,15 @@ private[deploy] class SparkSubmitArguments(args: Seq[String], env: Map[String, S
 
       case KEYTAB =>
         keytab = value
+
+      case MK_KEYTAB =>
+        mkKeytab = value
+
+      case MK_PRINCIPAL =>
+        mkPrincipal = value
+
+      case MK_HDFS_URL =>
+        mkHdfsURL = value
 
       case HELP =>
         printUsageAndExit(0)

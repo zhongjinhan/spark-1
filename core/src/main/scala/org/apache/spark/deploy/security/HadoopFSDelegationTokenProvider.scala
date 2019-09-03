@@ -61,6 +61,7 @@ private[deploy] class HadoopFSDelegationTokenProvider(fileSystems: Configuration
     val maxAttempts = sparkConf.get(FS_CREDENTIALS_MAX_FETCH_ATTEMPTS)
     var lastCount = -1
     var fetchCreds = creds
+    fsToGetTokens.map(f => logInfo("hdfs-service-name" + f.getCanonicalServiceName))
     var remainingAttempts = maxAttempts
     while (remainingAttempts > 0 && (lastCount == -1 || lastCount != credentialCount(fetchCreds))) {
       remainingAttempts -= 1

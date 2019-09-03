@@ -65,6 +65,7 @@ private[spark] class HadoopDelegationTokenManager(
 
   private def getDelegationTokenProviders: Map[String, HadoopDelegationTokenProvider] = {
     val providers = Seq(new HadoopFSDelegationTokenProvider(fileSystems)) ++
+      Seq(new HadoopMultiFSDelegationTokenProvider()) ++
       safeCreateProvider(new HiveDelegationTokenProvider) ++
       safeCreateProvider(new HBaseDelegationTokenProvider)
 
